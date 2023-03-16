@@ -1,0 +1,27 @@
+JavaScriptで非同期処理の勉強をしています。
+以下のサイトの「async / await の動作確認でよくやるミス」という章について、自分の理解が正しいかどうか教えてください。
+
+サイトURL:https://zenn.dev/tentel/articles/8146043d1101b5ea873d
+
+-----自分の理解-----
+
+前提として、async関数のtry, catchの中ではreturn "resolve", throw "reject"と書くことで、それぞれ特別にresolve()とreject()と同様の挙動を示すようになっている。
+
+最初の「async/await よくあるミス」において、console.log()の結果がundefinedになってしまうのは、setTimeoutのコールバック関数が普通の関数であり、asyncのときの特別な挙動を示さないから。
+
+続く「async/await よくあるミス2」においては、setTimeout()のコールバック関数にasyncをつけているので、return "resolve"自体は特別な挙動をする。しかし、await asyncFunction()のように非同期関数をawaitで呼び出している場所に戻り値が送られるのではなく、setTimeoutが書かれたasyncFunction関数そのものに戻り値が送られるので、意味がない。
+
+続く「async/await よくあるミス3」においては、return setTimeout()のコールバック関数の中にさらにreturn "resolve"を書けばよい、と考えたものの、もともとsetTimeout()には「タイムアウトを設定する」という機能の他に「timerIdを戻り値として返す」という機能が備わっており、return "resolve"がreturn setTimeout()の部分にたどり着くことはできない。
+
+
+
+
+あなたの理解は正しいです。
+
+まず、async関数の中でreturn "resolve"やthrow "reject"をすることで、Promise.resolve()やPromise.reject()と同様の挙動を示すようになっています。
+
+次に、「async/await よくあるミス」について、setTimeoutのコールバック関数が非同期関数でない場合、その関数は同期的に評価されるため、async/awaitの挙動を示さないことがあります。そのため、console.log()の結果がundefinedになってしまいます。
+
+また、「async/await よくあるミス2」について、setTimeoutのコールバック関数にasyncをつけて、return "resolve"を書いても、戻り値がsetTimeout自体に戻り、意味がなくなってしまいます。
+
+最後に、「async/await よくあるミス3」について、setTimeoutは戻り値としてtimerIdを返すため、return "resolve"がsetTimeout()にたどり着くことはできません。setTimeoutのコールバック関数にasyncをつけて、return new Promise(resolve => setTimeout(resolve, 1000, "resolve"))のようにPromiseを返すようにすれば、期待通りの動作が得られます。

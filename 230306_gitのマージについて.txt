@@ -1,0 +1,13 @@
+gitでmasterブランチが更新されました。コードの各所にコメントが追加されたそうです。自分は今ローカルのmybranchブランチで作業をしており、いろいろ変更も加えてはいます(もちろんmybranchブランチにコミット・プッシュもしている)。うまくmasterブランチの変更内容をこちらにも引っ張ってきたいのですが、どうすればよいですか？
+まずはローカルのmasterブランチを更新する必要があります。以下のコマンドを実行して、最新のmasterブランチを取得しましょう。
+
+Copy code
+git checkout master
+git pull
+次に、mybranchブランチに移動して、masterブランチの変更を取り込みます。
+
+sql
+Copy code
+git checkout mybranch
+git merge master
+これにより、mybranchブランチにもmasterブランチの最新の変更が反映されます。もし競合（コンフリクト）が発生した場合は、競合箇所を手動で修正してコミットする必要があります。
